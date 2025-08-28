@@ -1,12 +1,8 @@
 package example.demo.schedule.service;
 
 import example.demo.comment.dto.CommentResponse;
-import example.demo.comment.entity.Comment;
 import example.demo.comment.repository.CommentRepository;
-import example.demo.schedule.dto.ScheduleGetAllResponse;
-import example.demo.schedule.dto.ScheduleGetOneResponse;
-import example.demo.schedule.dto.ScheduleSaveRequest;
-import example.demo.schedule.dto.ScheduleSaveResponse;
+import example.demo.schedule.dto.*;
 import example.demo.schedule.entity.Schedule;
 import example.demo.schedule.repository.ScheduleRepository;
 import example.demo.user.entity.User;
@@ -17,9 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -90,6 +84,33 @@ public class ScheduleService {
                 schedule.getTitle(),
                 schedule.getContent(),
                 comments,                           //스케쥴의 댓글 List<CommentResponse>를 담은 변수
+                schedule.getCreatedAt(),
+                schedule.getModifiedAt()
+        );
+    }
+
+    //일정 수정
+    public ScheduleUpdateResponse updateSchedule(Long userId, ScheduleUpdateRequest request, Long scheduleId){
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "없는 일정입니다.")
+        );
+        if(!userId.equals(schedule.getUser().getId())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"게시글은 본인만 수정이 가능합니다");
+        }
+        schedule.updateSchedule(request.getTitle(), request.getContent());
+        return new ScheduleUpdateResponse(
+                schedule.getId(),
+                schedule.getUser().getId(),
+                schedule.getTitle(),
+                schedule.getContent(),
+                schedule.getComments().stream()
+                        .map(comment -> new CommentResponse(
+                                comment.getId(),
+                                comment.getUser().getId(),
+                                comment.getContent(),
+                                comment.getCreatedAt(),
+                                comment.getModifiedAt()
+                        )).collect(Collectors.toList()),
                 schedule.getCreatedAt(),
                 schedule.getModifiedAt()
         );

@@ -1,9 +1,6 @@
 package example.demo.schedule.controller;
 
-import example.demo.schedule.dto.ScheduleGetAllResponse;
-import example.demo.schedule.dto.ScheduleGetOneResponse;
-import example.demo.schedule.dto.ScheduleSaveRequest;
-import example.demo.schedule.dto.ScheduleSaveResponse;
+import example.demo.schedule.dto.*;
 import example.demo.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -42,6 +39,18 @@ public class ScheduleController {
         return ResponseEntity.ok(scheduleService.findSchedule(scheduleId));
     }
 
+    //일정 수정
+    @PutMapping("/{scheduleId}")
+    public ResponseEntity<ScheduleUpdateResponse> updateSchedule(
+//            @SessionAttribute(name = Const.LOGIN_USER) Long userId,
+            @RequestBody ScheduleUpdateRequest request,
+            @PathVariable Long scheduleId
+    ){
+        Long userId = 100L;
+        return ResponseEntity.ok(scheduleService.updateSchedule(userId, request, scheduleId));
+    }
+
+    //일정삭제
     @DeleteMapping("/{scheduleId}")
     public void deleteSchedule(
 //            @SessionAttribute(name = Const.LOGIN_USER) Long userId,                    //Session을 통해 로그인 아이디 받아와야함  //추후 주석 해제
