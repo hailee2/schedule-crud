@@ -2,6 +2,7 @@ package example.demo.schedule.service;
 
 import example.demo.comment.dto.CommentResponse;
 import example.demo.comment.repository.CommentRepository;
+import example.demo.schedule.dto.ScheduleGetAllResponse;
 import example.demo.schedule.dto.ScheduleGetOneResponse;
 import example.demo.schedule.dto.ScheduleSaveRequest;
 import example.demo.schedule.dto.ScheduleSaveResponse;
@@ -40,6 +41,28 @@ public class ScheduleService {
                 schedule.getCreatedAt(),
                 schedule.getModifiedAt()
         );
+    }
+
+    //일정 전체조회
+    @Transactional(readOnly = true)
+    public List<ScheduleGetAllResponse> findSchedules(){
+        return scheduleRepository.findAll().stream()
+                .map(schedule -> new ScheduleGetAllResponse(
+                    schedule.getId(),
+                    schedule.getUser().getId(),
+                    schedule.getTitle(),
+                    schedule.getContent(),
+                    schedule.getComments().stream()
+                            .map(comment -> new CommentResponse(
+                                comment.getId(),
+                                comment.getUser().getId(),
+                                comment.getContent(),
+                                comment.getCreatedAt(),
+                                comment.getModifiedAt()
+                            )).collect(Collectors.toList()),
+                    schedule.getCreatedAt(),
+                    schedule.getModifiedAt()
+                )).collect(Collectors.toList());
     }
 
     //일정 단건조회
