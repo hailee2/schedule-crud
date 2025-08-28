@@ -44,4 +44,16 @@ public class ScheduleService {
                 schedule.getModifiedAt()
         );
     }
+
+    //일정 삭제
+    @Transactional
+    public void deleteSchedule(Long userId, Long scheduleId){
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(                    //입력받은 일정 ID로 일정조회
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 일정입니다."));    //입력받은 일정 ID가 없는 ID면 예외처리
+
+        if(userId.equals(schedule.getUser().getId())){                                               //로그인한 ID와 작성자 ID가 같은지 확인하기
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인의 게시글만 삭제할 수 있습니다.");  //작성자가 본인이 아닐 경우 예외처리
+        }
+        scheduleRepository.deleteById(scheduleId);
+    }
 }
