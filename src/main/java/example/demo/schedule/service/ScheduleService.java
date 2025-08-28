@@ -1,0 +1,48 @@
+package example.demo.schedule.service;
+
+import example.demo.comment.dto.CommentResponse;
+import example.demo.comment.repository.CommentRepository;
+import example.demo.schedule.dto.ScheduleGetOneResponse;
+import example.demo.schedule.entity.Schedule;
+import example.demo.schedule.repository.ScheduleRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class ScheduleService {
+    private final ScheduleRepository scheduleRepository;
+    private final CommentRepository commentRepository;
+
+    //일정 단건조회
+    @Transactional(readOnly = true)
+    public ScheduleGetOneResponse findSchedule(Long scheduleId){                    // 컨트롤러에서 scheduleId 전달받음
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(    // 컨트롤러에서 전달받은 scheduleId로 일정을 조회하고, 결과를 Schedule 타입의 schedule 변수에 할당
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"존재하지 않는 일정입니다.")        //넣은 스케쥴아이디가 존재하지 않을 경우 예외처리
+        );
+        List<CommentResponse> comments = commentRepository.findAllByScheduleId(scheduleId).stream()  //코멘트repository에서 scheduleId를 입력해 해당 일정의 댓글을 모두 찾아온다.> 지금은 List<comment>, 코멘트 엔티티의 리스트 형식임
+                .map(comment -> new CommentResponse (       //stream으로 comment를 commentresponse로 바꿔준다.
+                        comment.getId(),
+                        comment.getUser().getId(),
+                        comment.getContent(),
+                        comment.getCreatedAt(),
+                        comment.getModifiedAt()
+                )).collect(Collectors.toList());                     //원하는 타입이 List<CommentResponse>이므로 리스트로 바꿔준다.
+
+        return new ScheduleGetOneResponse(
+                schedule.getId(),
+                schedule.getUser().getId(),
+                schedule.getTitle(),
+                schedule.getContent(),
+                comments,                           //스케쥴의 댓글 List<CommentResponse>를 담은 변수
+                schedule.getCreatedAt(),
+                schedule.getModifiedAt()
+        );
+    }
+}
