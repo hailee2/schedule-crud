@@ -23,9 +23,11 @@ public class Comment extends BaseEntity {
     @JoinColumn(name="user_id", nullable=false)
     private User user;
 
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="schedule_id", nullable=false)
-    private Schedule schedule;
+//    @ManyToOne(fetch=FetchType.LAZY)
+//    @JoinColumn(name="schedule_id", nullable=false)
+//    private Schedule schedule;
+
+    private Long scheduleId;
 
     @Column(length=255, nullable = false)
     @NotBlank
@@ -33,7 +35,7 @@ public class Comment extends BaseEntity {
 
     public Comment(User user, Schedule schedule, String content){
         this.user = user;
-        this.schedule = schedule;
+        this.scheduleId = schedule.getId();
         this.content = content;
     }
 

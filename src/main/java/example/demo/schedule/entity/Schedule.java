@@ -42,20 +42,20 @@ public class Schedule extends BaseEntity {
     //cascade는 주인 엔티티와 연동된다고 생각하면 됨. 댓글에 변화가 생기면 일정에도 변화가 생김.
     //orphanRemoval은 주인 엔티티가 삭제되면 고아객체가되니까 고아객체가되면 삭제해주는 기능.
 
-    private Schedule(String title, String content, User user, List<Comment> comments){
+    private Schedule(String title, String content, User user){
         this.title = title;
         this.content = content;
         this.user = user;
-        this.comments = comments;
+       // this.comments = comments;
     }
 
     public static Schedule of(String title, String content, User user){
-        return new Schedule(title, content, user, new ArrayList<>());
+        return new Schedule(title, content, user); //양방향일 때 엔티티에 comment 있으므로 생성자 매개변수에 List<Comments> comment 추가해줘야함
     }
 
-    public static Schedule ofWithComments(String title, String content, User user, List<Comment> comments){
-        return new Schedule(title, content, user, comments);
-    }
+//    public static Schedule ofWithComments(String title, String content, User user, List<Comment> comments){
+//        return new Schedule(title, content, user, comments);
+//    }
 
     public void updateSchedule(String title, String content){
         this.title=title;

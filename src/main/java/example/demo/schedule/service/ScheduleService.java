@@ -1,6 +1,7 @@
 package example.demo.schedule.service;
 
 import example.demo.comment.dto.CommentResponse;
+import example.demo.comment.entity.Comment;
 import example.demo.comment.repository.CommentRepository;
 import example.demo.schedule.dto.ScheduleGetAllResponse;
 import example.demo.schedule.dto.ScheduleGetOneResponse;
@@ -15,7 +16,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,7 +50,7 @@ public class ScheduleService {
     //일정 전체조회
     @Transactional(readOnly = true)
     public List<ScheduleGetAllResponse> findSchedules(){
-        return scheduleRepository.findAll().stream()
+        return scheduleRepository.findAllWithComments().stream()
                 .map(schedule -> new ScheduleGetAllResponse(
                     schedule.getId(),
                     schedule.getUser().getId(),
