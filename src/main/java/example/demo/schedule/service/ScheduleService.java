@@ -3,8 +3,12 @@ package example.demo.schedule.service;
 import example.demo.comment.dto.CommentResponse;
 import example.demo.comment.repository.CommentRepository;
 import example.demo.schedule.dto.ScheduleGetOneResponse;
+import example.demo.schedule.dto.ScheduleSaveRequest;
+import example.demo.schedule.dto.ScheduleSaveResponse;
 import example.demo.schedule.entity.Schedule;
 import example.demo.schedule.repository.ScheduleRepository;
+import example.demo.user.entity.User;
+import example.demo.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,6 +22,25 @@ import java.util.stream.Collectors;
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
+
+    //일정생성
+    @Transactional
+    public ScheduleSaveResponse saveSchedule(Long userId, ScheduleSaveRequest request){
+        User user = userRepository.findById(userId).orElseThrow(                            //받아온 유저ID로 User 조회하기
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "없는 유저입니다.")     //없는 유저ID라면 예외처리
+        );
+        Schedule schedule = Schedule.of(request.getTitle(),request.getContent(),user);      //Schedule 객체 생성(제목,내용,작성자user)
+        scheduleRepository.save(schedule);                                                  //생성한 스케쥴을 DB에 저장하기.
+        return new ScheduleSaveResponse(                                                    //스케쥴을 Response형태로 반환
+                schedule.getId(),
+                schedule.getUser().getId(),
+                schedule.getTitle(),
+                schedule.getContent(),
+                schedule.getCreatedAt(),
+                schedule.getModifiedAt()
+        );
+    }
 
     //일정 단건조회
     @Transactional(readOnly = true) //조회 로직이므로 읽기 전용
