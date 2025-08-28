@@ -10,18 +10,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor    //final 접근 제어자로 설정된 필드에 대해서 생성자를 만들어준다.
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final CommentRepository commentRepository;
 
     //일정 단건조회
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true) //조회 로직이므로 읽기 전용
     public ScheduleGetOneResponse findSchedule(Long scheduleId){                    // 컨트롤러에서 scheduleId 전달받음
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(    // 컨트롤러에서 전달받은 scheduleId로 일정을 조회하고, 결과를 Schedule 타입의 schedule 변수에 할당
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"존재하지 않는 일정입니다.")        //넣은 스케쥴아이디가 존재하지 않을 경우 예외처리
