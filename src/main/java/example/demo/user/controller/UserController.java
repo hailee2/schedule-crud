@@ -43,4 +43,13 @@ public class UserController {
         Long userId = 100L;
         return ResponseEntity.ok(userService.updateUser(userId, request));
     }
+
+    //유저 삭제
+    @DeleteMapping("/me")
+    public void deleteUser(
+            //            @SessionAttribute(name = Const.LOGIN_USER) Long userId,
+    ){
+        Long userId = 100L;
+        userService.deleteUser(userId);
+    }
 }
