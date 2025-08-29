@@ -1,9 +1,6 @@
 package example.demo.user.controller;
 
-import example.demo.user.dto.UserGetAllResponse;
-import example.demo.user.dto.UserGetOneResponse;
-import example.demo.user.dto.UserSaveRequest;
-import example.demo.user.dto.UserSaveResponse;
+import example.demo.user.dto.*;
 import example.demo.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,5 +32,15 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserGetAllResponse>> getUsers(){
         return ResponseEntity.ok(userService.findUsers());
+    }
+
+    //유저 수정
+    @PutMapping("/me")
+    public ResponseEntity<UserUpdateResponse> updateUser(
+            //            @SessionAttribute(name = Const.LOGIN_USER) Long userId,
+            @RequestBody UserUpdateRequest request
+    ){
+        Long userId = 100L;
+        return ResponseEntity.ok(userService.updateUser(userId, request));
     }
 }

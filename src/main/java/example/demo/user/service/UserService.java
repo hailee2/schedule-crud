@@ -1,9 +1,6 @@
 package example.demo.user.service;
 
-import example.demo.user.dto.UserGetAllResponse;
-import example.demo.user.dto.UserGetOneResponse;
-import example.demo.user.dto.UserSaveRequest;
-import example.demo.user.dto.UserSaveResponse;
+import example.demo.user.dto.*;
 import example.demo.user.entity.User;
 import example.demo.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -60,5 +57,21 @@ public class UserService {
                         user.getCreatedAt(),
                         user.getModifiedAt()
                 )).collect(Collectors.toList());
+    }
+
+    //유저 수정
+    @Transactional
+    public UserUpdateResponse updateUser(Long userId, UserUpdateRequest request){
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 유저 ID입니다.")
+        );
+        user.userUpdate(request.getNickname(), request.getPassword());
+        return new UserUpdateResponse(
+                user.getId(),
+                user.getNickname(),
+                user.getEmail(),
+                user.getCreatedAt(),
+                user.getModifiedAt()
+        );
     }
 }
