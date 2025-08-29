@@ -35,8 +35,8 @@ public class Schedule extends BaseEntity {
     @NotBlank
     private String content;
 
-    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();     // new ArrayList<>(); 하는 이유 : 초기화 안하면 null값이라 컴파일오류뜸.
+//    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Comment> comments = new ArrayList<>();     // new ArrayList<>(); 하는 이유 : 초기화 안하면 null값이라 컴파일오류뜸.
     //양방향 관계에서 외래키를 갖고있는 쪽이 주인. 여기선 Comment가 주인
     //mappedBy가 없으면 Schedule 테이블에도 외래키를 생성하려고함. -> 중복컬럼 생성됨. mappedBy해서 schedule은 읽기전용 역할만 하도록 함.
     //cascade는 주인 엔티티와 연동된다고 생각하면 됨. 댓글에 변화가 생기면 일정에도 변화가 생김.

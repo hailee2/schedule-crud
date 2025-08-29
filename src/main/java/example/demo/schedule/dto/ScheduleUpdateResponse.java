@@ -11,16 +11,14 @@ public class ScheduleUpdateResponse {
     private final Long userId;
     private final String title;
     private final String content;
-    private final List<CommentResponse> comments;
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
 
-    public ScheduleUpdateResponse(Long id, Long userId, String title, String content, List<CommentResponse> comments, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public ScheduleUpdateResponse(Long id, Long userId, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.id = id;
         this.userId = userId;
         this.title = title;
         this.content = content;
-        this.comments = comments;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
     }

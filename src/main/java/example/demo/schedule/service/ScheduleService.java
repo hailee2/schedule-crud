@@ -1,8 +1,11 @@
 package example.demo.schedule.service;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import example.demo.comment.dto.CommentResponse;
+import example.demo.comment.entity.QComment;
 import example.demo.comment.repository.CommentRepository;
 import example.demo.schedule.dto.*;
+import example.demo.schedule.entity.QSchedule;
 import example.demo.schedule.entity.Schedule;
 import example.demo.schedule.repository.ScheduleRepository;
 import example.demo.user.entity.User;
@@ -21,6 +24,7 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final JPAQueryFactory queryFactory;
 
     //일정생성
     @Transactional
@@ -40,26 +44,54 @@ public class ScheduleService {
         );
     }
 
-    //일정 전체조회
+    //일정 전체조회 1(양방향일 때)
+//    @Transactional(readOnly = true)
+//    public List<ScheduleGetAllResponse> findSchedules(){
+//        return scheduleRepository.findAllWithComments().stream()
+//                .map(schedule -> new ScheduleGetAllResponse(
+//                    schedule.getId(),
+//                    schedule.getUser().getId(),
+//                    schedule.getTitle(),
+//                    schedule.getContent(),
+//                    schedule.getComments().stream()
+//                            .map(comment -> new CommentResponse(
+//                                comment.getId(),
+//                                comment.getUser().getId(),
+//                                comment.getContent(),
+//                                comment.getCreatedAt(),
+//                                comment.getModifiedAt()
+//                            )).collect(Collectors.toList()),
+//                    schedule.getCreatedAt(),
+//                    schedule.getModifiedAt()
+//                )).collect(Collectors.toList());
+//    }
+
+    // 일정 전체조회2(단방향일때 QueryDSL 사용)
     @Transactional(readOnly = true)
     public List<ScheduleGetAllResponse> findSchedules(){
-        return scheduleRepository.findAllWithComments().stream()
-                .map(schedule -> new ScheduleGetAllResponse(
-                    schedule.getId(),
-                    schedule.getUser().getId(),
-                    schedule.getTitle(),
-                    schedule.getContent(),
-                    schedule.getComments().stream()
-                            .map(comment -> new CommentResponse(
-                                comment.getId(),
-                                comment.getUser().getId(),
-                                comment.getContent(),
-                                comment.getCreatedAt(),
-                                comment.getModifiedAt()
-                            )).collect(Collectors.toList()),
-                    schedule.getCreatedAt(),
-                    schedule.getModifiedAt()
-                )).collect(Collectors.toList());
+        QSchedule schedule = QSchedule.schedule;
+        QComment comment = QComment.comment;
+
+        // 1. Schedule + Comment fetch join
+        List<Schedule> schedules = queryFactory
+                .selectFrom(schedule)
+                .leftJoin(comment).on(comment.schedule.eq(schedule))
+                .fetchJoin()
+                .distinct()
+                .fetch();
+
+        // 2. Schedule -> DTO 변환
+        return schedules.stream()
+                .map(s -> {
+                    List<CommentResponse> response = queryFactory
+                            .selectFrom(comment)
+                            .where(comment.schedule.eq(s))
+                            .fetch()
+                            .stream()
+                            .map(c -> new CommentResponse(c.getId(), c.getUser().getId(), c.getContent(), c.getCreatedAt(), c.getModifiedAt()))
+                            .collect(Collectors.toList());
+                    return new ScheduleGetAllResponse(s.getId(),s.getUser().getId(),s.getTitle(),s.getContent(),response, s.getCreatedAt(),s.getModifiedAt());
+                }).collect(Collectors.toList());
     }
 
     //일정 단건조회
@@ -102,14 +134,6 @@ public class ScheduleService {
                 schedule.getUser().getId(),
                 schedule.getTitle(),
                 schedule.getContent(),
-                schedule.getComments().stream()
-                        .map(comment -> new CommentResponse(
-                                comment.getId(),
-                                comment.getUser().getId(),
-                                comment.getContent(),
-                                comment.getCreatedAt(),
-                                comment.getModifiedAt()
-                        )).collect(Collectors.toList()),
                 schedule.getCreatedAt(),
                 schedule.getModifiedAt()
         );
