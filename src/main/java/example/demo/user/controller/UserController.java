@@ -1,14 +1,13 @@
 package example.demo.user.controller;
 
+import example.demo.user.dto.UserGetOneResponse;
 import example.demo.user.dto.UserSaveRequest;
 import example.demo.user.dto.UserSaveResponse;
 import example.demo.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController         //@Controller + @ResponseBody
 @RequiredArgsConstructor
@@ -16,9 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
 
+    //유저 생성
     @PostMapping
     public ResponseEntity<UserSaveResponse> saveUser(UserSaveRequest request){
         UserSaveResponse response = userService.saveUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    //유저 단건 조회
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserGetOneResponse> getUser(@PathVariable Long userId){
+        return ResponseEntity.ok(userService.findUser(userId));
     }
 }
