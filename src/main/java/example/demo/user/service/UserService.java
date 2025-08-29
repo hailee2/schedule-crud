@@ -1,5 +1,6 @@
 package example.demo.user.service;
 
+import example.demo.user.dto.UserGetAllResponse;
 import example.demo.user.dto.UserGetOneResponse;
 import example.demo.user.dto.UserSaveRequest;
 import example.demo.user.dto.UserSaveResponse;
@@ -10,6 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,5 +47,18 @@ public class UserService {
                 user.getCreatedAt(),
                 user.getModifiedAt()
         );
+    }
+
+    //유저 전체 조회 : 필요한가? 관리자 말고는 필요없지만 일단 연습용으로 생성해보기!
+    @Transactional(readOnly = true)
+    public List<UserGetAllResponse> findUsers(){
+        return userRepository.findAll().stream()
+                .map(user -> new UserGetAllResponse(
+                        user.getId(),
+                        user.getNickname(),
+                        user.getEmail(),
+                        user.getCreatedAt(),
+                        user.getModifiedAt()
+                )).collect(Collectors.toList());
     }
 }
