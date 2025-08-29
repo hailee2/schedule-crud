@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
+@RequiredArgsConstructor //**@Autowired 찾아보기**
 @RequestMapping("/schedules")
 public class ScheduleController {
 
