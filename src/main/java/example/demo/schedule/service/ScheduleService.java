@@ -69,26 +69,32 @@ public class ScheduleService {
     // 일정 전체조회2(단방향일때 QueryDSL 사용)
     @Transactional(readOnly = true)
     public List<ScheduleGetAllResponse> findSchedules(){
-        QSchedule schedule = QSchedule.schedule;
-        QComment comment = QComment.comment;
+        QSchedule schedule = QSchedule.schedule;    //QueryDSL에서 schedule 엔티티를 표현하는 Q클래스
+        QComment comment = QComment.comment;        //QueryDSL에서 comment 엔티티를 표현하는 Q클래스
 
         // 1. Schedule + Comment fetch join
-        List<Schedule> schedules = queryFactory
-                .selectFrom(schedule)
-                .leftJoin(comment).on(comment.schedule.eq(schedule))
-                .fetchJoin()
-                .distinct()
-                .fetch();
+        List<Schedule> schedules = queryFactory     //queryFactory는 QueryDSL 쿼리를 생성/실행하는 핵심 객체
+                .selectFrom(schedule)               //조회 시작 대상: schedule 엔티티
+                .leftJoin(comment).on(comment.schedule.eq(schedule))    //schedule과 comment를 left join. eq()는 두 컬럼/엔티티가 같은지 조건을 의미 (= 연산자 역할)
+                .fetchJoin()    //fetchJoin: 연관 엔티티(comment)를 한 번에 같이 조회해서 N+1 문제 방지
+                .distinct()     //조인 시 중복된 schedule 엔티티 제거
+                .fetch();       //최종 실행 → List<Schedule> 반환
 
         // 2. Schedule -> DTO 변환
+        //⬇️List<Schedule> → List<ScheduleGetAllResponse>
         return schedules.stream()
                 .map(s -> {
+                    //스케줄에 속한 댓글들을 다시 조회해서 DTO로 변환
                     List<CommentResponse> response = queryFactory
+                            //comment 엔티티 선택
                             .selectFrom(comment)
+                            //해당 스케줄(s)에 속t한 댓글만 조회. eq(s)는 "comment.schedule == s" 조건
                             .where(comment.schedule.eq(s))
                             .fetch()
                             .stream()
-                            .map(c -> new CommentResponse(c.getId(), c.getUser().getId(), c.getContent(), c.getCreatedAt(), c.getModifiedAt()))
+                            //Comment → CommentResponse로 변환
+                            .map(c -> new CommentResponse(c.getId(), c.getUser().getId(), c.getContent(), c.getCreatedAt(), c.getModifiedAt()
+                            ))
                             .collect(Collectors.toList());
                     return new ScheduleGetAllResponse(s.getId(),s.getUser().getId(),s.getTitle(),s.getContent(),response, s.getCreatedAt(),s.getModifiedAt());
                 }).collect(Collectors.toList());
