@@ -2,7 +2,6 @@ package example.demo.schedule.dto;
 
 import example.demo.comment.dto.CommentResponse;
 import lombok.Getter;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
