@@ -1,5 +1,6 @@
 package example.demo.user.service;
 
+import example.demo.common.auth.PasswordEncoder;
 import example.demo.user.dto.*;
 import example.demo.user.entity.User;
 import example.demo.user.repository.UserRepository;
@@ -16,11 +17,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     //유저 생성
     @Transactional
     public UserSaveResponse saveUser(UserSaveRequest request){
-        User user = User.of(request.getNickname(), request.getEmail(), request.getPassword());
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        User user = User.of(request.getNickname(), request.getEmail(), encodedPassword);
         User savedUser = userRepository.save(user);
         return new UserSaveResponse(
                 savedUser.getId(),
@@ -65,7 +68,8 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 유저 ID입니다.")
         );
-        user.userUpdate(request.getNickname(), request.getPassword());
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        user.userUpdate(request.getNickname(), encodedPassword);
         return new UserUpdateResponse(
                 user.getId(),
                 user.getNickname(),
