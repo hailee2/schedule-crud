@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @RequiredArgsConstructor    //final 접근 제어자로 설정된 필드에 대해서 생성자를 만들어준다.
@@ -68,7 +69,7 @@ public class ScheduleService {
 
     // 일정 전체조회2(단방향일때 QueryDSL 사용)
     @Transactional(readOnly = true)
-    public List<ScheduleGetAllResponse> findSchedules(){
+    public List<ScheduleGetAllResponse> findSchedules(Pageable pageable){
         QSchedule schedule = QSchedule.schedule;    //QueryDSL에서 schedule 엔티티를 표현하는 Q클래스
         QComment comment = QComment.comment;        //QueryDSL에서 comment 엔티티를 표현하는 Q클래스
 
@@ -78,6 +79,10 @@ public class ScheduleService {
                 .leftJoin(comment).on(comment.schedule.eq(schedule))    //schedule과 comment를 left join. eq()는 두 컬럼/엔티티가 같은지 조건을 의미 (= 연산자 역할)
                 .fetchJoin()    //fetchJoin: 연관 엔티티(comment)를 한 번에 같이 조회해서 N+1 문제 방지
                 .distinct()     //조인 시 중복된 schedule 엔티티 제거
+                .orderBy(schedule.modifiedAt.desc()) // 최신 수정일 순
+                .offset(pageable.getOffset())       // 페이지 시작 위치
+                .limit(pageable.getPageSize())      // 페이지 크기
+
                 .fetch();       //최종 실행 → List<Schedule> 반환
 
         // 2. Schedule -> DTO 변환
