@@ -1,5 +1,6 @@
 package example.demo.user.controller;
 
+import example.demo.common.consts.Const;
 import example.demo.user.dto.*;
 import example.demo.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +16,12 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    //유저 생성
-    @PostMapping
-    public ResponseEntity<UserSaveResponse> saveUser(UserSaveRequest request){
-        UserSaveResponse response = userService.saveUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
+    //유저 생성 -> auth 회원가입 controller로 이동
+//    @PostMapping
+//    public ResponseEntity<UserSaveResponse> saveUser(@RequestBody UserSaveRequest request){
+//        UserSaveResponse response = userService.saveUser(request);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//    }
 
     //유저 단건 조회
     @GetMapping("/{userId}")
@@ -37,19 +38,17 @@ public class UserController {
     //유저 수정
     @PutMapping("/me")
     public ResponseEntity<UserUpdateResponse> updateUser(
-            //            @SessionAttribute(name = Const.LOGIN_USER) Long userId,
+            @SessionAttribute(name = Const.LOGIN_USER) Long userId,
             @RequestBody UserUpdateRequest request
     ){
-        Long userId = 100L;
         return ResponseEntity.ok(userService.updateUser(userId, request));
     }
 
-    //유저 삭제
-    @DeleteMapping("/me")
-    public void deleteUser(
-            //            @SessionAttribute(name = Const.LOGIN_USER) Long userId,
-    ){
-        Long userId = 100L;
-        userService.deleteUser(userId);
-    }
+    //유저 삭제 -> auth 회원탈퇴 controller로 이동
+//    @DeleteMapping("/me")
+//    public void deleteUser(
+//            @SessionAttribute(name = Const.LOGIN_USER) Long userId
+//    ){
+//        userService.deleteUser(userId);
+//    }
 }

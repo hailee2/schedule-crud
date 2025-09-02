@@ -19,20 +19,20 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    //유저 생성
-    @Transactional
-    public UserSaveResponse saveUser(UserSaveRequest request){
-        String encodedPassword = passwordEncoder.encode(request.getPassword());
-        User user = User.of(request.getNickname(), request.getEmail(), encodedPassword);
-        User savedUser = userRepository.save(user);
-        return new UserSaveResponse(
-                savedUser.getId(),
-                savedUser.getNickname(),
-                savedUser.getEmail(),
-                savedUser.getCreatedAt(),
-                savedUser.getModifiedAt()
-        );
-    }
+    //유저 생성 -> Auth 회원가입 서비스로 이동
+//    @Transactional
+//    public UserSaveResponse saveUser(UserSaveRequest request){
+//        String encodedPassword = passwordEncoder.encode(request.getPassword());
+//        User user = User.of(request.getNickname(), request.getEmail(), encodedPassword);
+//        User savedUser = userRepository.save(user);
+//        return new UserSaveResponse(
+//                savedUser.getId(),
+//                savedUser.getNickname(),
+//                savedUser.getEmail(),
+//                savedUser.getCreatedAt(),
+//                savedUser.getModifiedAt()
+//        );
+//    }
 
     //유저 조회
     @Transactional(readOnly = true)
@@ -79,11 +79,11 @@ public class UserService {
         );
     }
 
-    //유저 삭제
-    @Transactional
-    public void deleteUser(Long userId){
-        userRepository.findById(userId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 유저 ID입니다."));
-        userRepository.deleteById(userId);
-    }
+    //유저 삭제 -> auth 회원 탈퇴 서비스로 이동
+//    @Transactional
+//    public void deleteUser(Long userId){
+//        userRepository.findById(userId).orElseThrow(
+//                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 유저 ID입니다."));
+//        userRepository.deleteById(userId);
+//    }
 }

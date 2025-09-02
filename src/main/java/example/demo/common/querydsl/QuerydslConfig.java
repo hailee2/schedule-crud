@@ -11,7 +11,7 @@ public class QuerydslConfig {
     @PersistenceContext //영속성 컨텍스트를 스프링이 주입
     private EntityManager entityManager;
 
-    @Bean   //메서드의 반환 객체를 Bean으로 등
+    @Bean   //메서드의 반환 객체를 Bean으로 등록
     public JPAQueryFactory jpaQueryFactory() {
         return new JPAQueryFactory(entityManager);
     }
