@@ -40,4 +40,8 @@ public class Comment extends BaseEntity {
     public static Comment of(User user, Schedule schedule, String content){
         return new Comment(user, schedule, content);
     }
+
+    public void updateComment(String content){
+        this.content = content;
+    }
 }
