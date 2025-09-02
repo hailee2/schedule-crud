@@ -1,4 +1,4 @@
-package example.demo.user.dto;
+package example.demo.common.auth.dto;
 
 import lombok.Getter;
 

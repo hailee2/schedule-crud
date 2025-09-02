@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController         //@Controller + @ResponseBody
-@RequiredArgsConstructor
-@RequestMapping("/users")
+@RestController                 //@Controller + @ResponseBody
+@RequiredArgsConstructor        //final이 붙은 필드값을 생성자로 주입해서 객체 만들어줌 .
+@RequestMapping("/users")    //공통 URI를 앞에 묶어줌
 public class UserController {
     private final UserService userService;
 
@@ -38,8 +38,8 @@ public class UserController {
     //유저 수정
     @PutMapping("/me")
     public ResponseEntity<UserUpdateResponse> updateUser(
-            @SessionAttribute(name = Const.LOGIN_USER) Long userId,
-            @RequestBody UserUpdateRequest request
+            @SessionAttribute(name = Const.LOGIN_USER) Long userId, //세션에 저장되어있는 값을 컨트롤러의 메서드 파라미터로 자동으로 꺼내줌. 세션에 LOGIN_USER라는 이름으로 저장된 객체를 꺼내서 Long userId에 넣어줌
+            @RequestBody UserUpdateRequest request //RequestBody가 JSON을 UserUpdateRequest 객체로 자동변환해줌.
     ){
         return ResponseEntity.ok(userService.updateUser(userId, request));
     }
