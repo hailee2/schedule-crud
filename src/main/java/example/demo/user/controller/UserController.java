@@ -4,7 +4,6 @@ import example.demo.common.consts.Const;
 import example.demo.user.dto.*;
 import example.demo.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
