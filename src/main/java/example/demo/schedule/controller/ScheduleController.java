@@ -4,10 +4,11 @@ import example.demo.common.consts.Const;
 import example.demo.schedule.dto.*;
 import example.demo.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -29,8 +30,13 @@ public class ScheduleController {
 
     //일정 전체조회
     @GetMapping
-    public ResponseEntity<List<ScheduleGetAllResponse>> getSchedules(){
-        return ResponseEntity.ok(scheduleService.findSchedules());
+    public ResponseEntity<List<ScheduleGetAllResponse>> getSchedules(
+            @RequestParam(defaultValue = "0") int page,     //0번째 페이지
+            @RequestParam(defaultValue = "5") int size      //한페이지 5개
+    ){
+        Pageable pageable = PageRequest.of(page,size);
+        List<ScheduleGetAllResponse> schedules = scheduleService.findSchedules(pageable);
+        return ResponseEntity.ok(schedules);
     }
 
     //일정 단건조회
