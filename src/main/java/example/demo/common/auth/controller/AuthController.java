@@ -2,8 +2,8 @@ package example.demo.common.auth.controller;
 
 import example.demo.common.auth.dto.LoginRequest;
 import example.demo.common.auth.service.AuthService;
-import example.demo.user.dto.UserSaveRequest;
-import example.demo.user.dto.UserSaveResponse;
+import example.demo.common.auth.dto.UserSaveRequest;
+import example.demo.common.auth.dto.UserSaveResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;

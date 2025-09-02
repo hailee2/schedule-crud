@@ -2,8 +2,8 @@ package example.demo.common.auth.service;
 
 import example.demo.common.auth.PasswordEncoder;
 import example.demo.common.auth.dto.LoginRequest;
-import example.demo.user.dto.UserSaveRequest;
-import example.demo.user.dto.UserSaveResponse;
+import example.demo.common.auth.dto.UserSaveRequest;
+import example.demo.common.auth.dto.UserSaveResponse;
 import example.demo.user.entity.User;
 import example.demo.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ public class AuthService {
     //로그인 서비스
     @Transactional(readOnly = true)
     public Long Login(LoginRequest loginRequest){
-        User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(
+        User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(                //SELECT * FROM users WHERE email=request에서받은이메일 LIMIT 1;
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"해당 이메일이 존재하지 않습니다.")
         );
         if(!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())){
@@ -57,8 +57,8 @@ public class AuthService {
     //회원 탈퇴 서비스
     @Transactional
     public void deleteUser(Long userId){
-        userRepository.findById(userId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 유저 ID입니다."));
-        userRepository.deleteById(userId);
+//        userRepository.findById(userId).orElseThrow(
+//                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 유저 ID입니다."));        //컨트롤러에서 세션을 확인함
+        userRepository.deleteById(userId);              //DELETE FROM users WHERE id=userId
     }
 }
