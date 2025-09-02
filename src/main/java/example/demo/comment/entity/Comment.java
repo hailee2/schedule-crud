@@ -27,7 +27,7 @@ public class Comment extends BaseEntity {
     @JoinColumn(name="schedule_id", nullable=false)
     private Schedule schedule;
 
-    @Column(length=255, nullable = false)
+    @Column(length=250, nullable = false)
     @NotBlank
     private String content;
 
@@ -39,5 +39,9 @@ public class Comment extends BaseEntity {
 
     public static Comment of(User user, Schedule schedule, String content){
         return new Comment(user, schedule, content);
+    }
+
+    public void updateComment(String content){
+        this.content = content;
     }
 }
