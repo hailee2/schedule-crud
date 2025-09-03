@@ -4,6 +4,7 @@ import example.demo.common.auth.dto.LoginRequest;
 import example.demo.common.auth.service.AuthService;
 import example.demo.common.auth.dto.UserSaveRequest;
 import example.demo.common.auth.dto.UserSaveResponse;
+import example.demo.common.consts.Const;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -41,9 +42,9 @@ public class AuthController {
     public ResponseEntity<String> logout(
             HttpServletRequest request
     ){
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession(false);    //세션이 없으면 새로 생성하지 않음. 세션이 없으면 null 반환.
         if(session != null){
-            session.invalidate();
+            session.invalidate();           //현재 세션 무효화.
         }
         return ResponseEntity.ok("로그아웃 성공");
     }
@@ -53,7 +54,7 @@ public class AuthController {
             HttpServletRequest request
     ){
         HttpSession session = request.getSession(false);
-        Long userId = (Long) session.getAttribute("LOGIN_USER");
+        Long userId = (Long) session.getAttribute(Const.LOGIN_USER);    //getAttribute가 반환하는 타입은 Object
         authService.deleteUser(userId);
         session.invalidate();
     }

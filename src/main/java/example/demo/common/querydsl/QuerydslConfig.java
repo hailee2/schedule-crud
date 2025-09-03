@@ -16,3 +16,13 @@ public class QuerydslConfig {
         return new JPAQueryFactory(entityManager);
     }
 }
+/*
+QueryDSL은 JPQL 기반 쿼리를 직접 작성하고 실행하는 도구
+JPA Repository를 쓰는 CRUD메서드는 EntityManager를 내부에서 이미 사용 중
+QueryDSL은 직접 쿼리를 만들기 때문에 EntityManager가 필요함
+ */
+/*
+EntityManager와 영속성 컨택스트의 관계
+EntityManager는 영속성 컨텍스트를 관리하고 영속성 컨텍스트는 엔티티 상태를 기억하고 DB와 안전하게 동기하는 공간
+EntityManager = 관리자 | 영속성 컨텍스트 = 관리 대상 공간
+ */
