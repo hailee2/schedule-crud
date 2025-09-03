@@ -35,6 +35,8 @@ public class AuthService {
                 user.getModifiedAt()
         );
     }
+    //INSERT INTO users (nickname, email, password, created_at, modified_at)
+    //VALUES ('request.getNickname()', 'request.getEmail()', 'encodedPassword', NOW(), NOW());
 
     //로그인 서비스
     @Transactional(readOnly = true)

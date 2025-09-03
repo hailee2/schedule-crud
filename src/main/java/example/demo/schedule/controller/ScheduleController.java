@@ -58,7 +58,7 @@ public class ScheduleController {
     //일정삭제
     @DeleteMapping("/{scheduleId}")
     public void deleteSchedule(
-            @SessionAttribute(name = Const.LOGIN_USER) Long userId,                    //Session을 통해 로그인 아이디 받아와야함  //추후 주석 해제
+            @SessionAttribute(name = Const.LOGIN_USER) Long userId,                    //Session을 통해 로그인 아이디 받아와야함
             @PathVariable Long scheduleId
     ){
         scheduleService.deleteSchedule(userId, scheduleId);

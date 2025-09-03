@@ -25,7 +25,7 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
-    private final JPAQueryFactory queryFactory;
+    private final JPAQueryFactory queryFactory;     //queryDSL용 custom repository따로 만들어 사용하기.
 
     //일정생성
     @Transactional
@@ -80,10 +80,9 @@ public class ScheduleService {
                 .fetchJoin()    //fetchJoin: 연관 엔티티(comment)를 한 번에 같이 조회해서 N+1 문제 방지
                 .distinct()     //조인 시 중복된 schedule 엔티티 제거
                 .orderBy(schedule.modifiedAt.desc()) // 최신 수정일 순
-                .offset(pageable.getOffset())       // 페이지 시작 위치
+                .offset(pageable.getOffset())       // 페이지 시작 위치 | 페이지번호 * 페이지 크기
                 .limit(pageable.getPageSize())      // 페이지 크기
-
-                .fetch();       //최종 실행 → List<Schedule> 반환
+                .fetch();       //실제 쿼리를 DB에 날리고 결과를 가져오는 메서드 | 최종 실행 → List<Schedule> 반환
 
         // 2. Schedule -> DTO 변환
         //⬇️List<Schedule> → List<ScheduleGetAllResponse>
@@ -93,7 +92,7 @@ public class ScheduleService {
                     List<CommentResponse> response = queryFactory
                             //comment 엔티티 선택
                             .selectFrom(comment)
-                            //해당 스케줄(s)에 속t한 댓글만 조회. eq(s)는 "comment.schedule == s" 조건
+                            //해당 스케줄(s)에 속한 댓글만 조회. eq(s)는 "comment.schedule == s" 조건
                             .where(comment.schedule.eq(s))
                             .fetch()
                             .stream()
